@@ -64,9 +64,9 @@ public class PlayerMove : MonoBehaviour
         HandleGravityAndJump(deltaTime);
         HandleMouseLook(deltaTime);
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (GameManager.instance != null && GameManager.instance.canUseTuner && Input.GetKeyDown(KeyCode.Q))
         {
-            TunerManager.Instance.ToggleTuner();
+            if (TunerManager.Instance != null) TunerManager.Instance.ToggleTuner();
         }
 
     }
@@ -122,5 +122,7 @@ public class PlayerMove : MonoBehaviour
             Gizmos.DrawWireSphere(groundCheck.position, groundDistance);
         }
     }
+
+
 
 }

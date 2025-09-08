@@ -12,7 +12,6 @@ public class TutorialTrigger : MonoBehaviour
             if (manager != null)
             {
                 manager.TriggerTutorialStep(targetStep);
-                gameObject.SetActive(false);
             }
         }
     }

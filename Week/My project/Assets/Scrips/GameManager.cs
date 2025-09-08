@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour
     [Tooltip("플레이어가 특정 레버를 당겼는지 여부를 검사")]
     public bool isStage1LeverPulled = false;
 
+    [Tooltip("플레이어가 주파수 조율기를 사용할 수 있는지")]
+    public bool canUseTuner = false;
+
     private float previousTimeScale = 1f;
 
     private void Awake()

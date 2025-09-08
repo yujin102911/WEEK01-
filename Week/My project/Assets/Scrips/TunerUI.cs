@@ -2,9 +2,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 
 public class TunerUI : MonoBehaviour
 {
+    [Header("전체 UI 부모")]
+    [Tooltip("번개 부모")]
+    public GameObject tunerUIParent;
+
+
     [Header("UI연결")]
     [Tooltip("충전된 번개")]
     public Sprite activeSprite; //노란 번개
@@ -30,20 +36,32 @@ public class TunerUI : MonoBehaviour
             chargeIcons.Add(icon);
         }
 
+        tunerUIParent.SetActive(false);
+
         if(timerUIParent != null) timerUIParent.SetActive(false);
+        Debug.Log("번개UI비활성화");
         if (timeSlider != null) timeSlider.maxValue = TunerManager.Instance.tunerDuration;
 
     }
 
     private void Update()
     {
-        UpdateChargeUI(TunerManager.Instance.currentCharges);
-        HandleTimerUI(TunerManager.Instance.isTunerActive);
+        if (GameManager.instance != null && tunerUIParent != null && GameManager.instance.canUseTuner) 
+        {
+            tunerUIParent.SetActive(true); 
+        }
+
+        if(tunerUIParent != null && tunerUIParent.activeSelf && GameManager.instance.canUseTuner)
+        {
+            UpdateChargeUI(TunerManager.Instance.currentCharges);
+            HandleTimerUI(TunerManager.Instance.isTunerActive);
+        }
 
     }
 
     void UpdateChargeUI(int currentCharges)
     {
+        tunerUIParent.SetActive(true);
         for(int i = 0; i < chargeIcons.Count; i++)
         {
             if(i < currentCharges)

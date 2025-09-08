@@ -94,39 +94,44 @@ public class TutorialManager : MonoBehaviour
                 break;
 
             case 2:
-                dialogueText.text = "어라? 열차가 멈춘 것 같은데, 왜 문이 안열리지?";
+                dialogueText.text = "어라? 열차가 멈춘 것 같은데 왜 문을 안열어주지?";
                 nextButton.onClick.AddListener(CloseDialogueAndResumePlay); //다음 누르면 Player Turn이 올 수 있게
                 break;
 
             case 3: //Player가 Trigger영역에 도착하면 (느낌표 뜬 문 앞)
                 playerMove.canMove = false;
-                dialogueText.text = "(철컹철컹) 문이 안열리네. 기장실에 가서 물어봐야겠다.";
+                dialogueText.text = "(철컹철컹)\n안열리네. 기장실에 가봐야겠다.";
                 nextButton.onClick.AddListener(CloseDialogueAndResumePlay);
                 break;
 
             case 4: //Player가 Trigger영역에 도착하면 (다음 스테이지로 가는 문 앞)
                 playerMove.canMove = false;
                 tunerObject.SetActive(true); //이제부터 tuner 볼 수 있음
-                dialogueText.text = "(철컹철컹) 여기도 안열리네? 나갈 다른 방법을 찾아봐야겠는걸.";
+                dialogueText.text = "(철컹철컹)\n여기도 안열리네? \n나갈 다른 방법을 찾아봐야겠는걸.";
                 nextButton.onClick.AddListener(CloseDialogueAndResumePlay);
                 break;
 
             case 5: //Player가 Trigger영역에 도착하면 (주파수 조율기 영역 내)
                 playerMove.canMove = false;
-                dialogueText.text = "이게 뭐지? 뭔가 오래된것같은 기계다.";
+                dialogueText.text = "어? 이게 뭐지?";
+                
+                if(GameManager.instance != null)
+                {
+                    GameManager.instance.canUseTuner = true;
+                    Debug.LogWarning("[TutorialManager]조율기 사용 권한 부여");
+                }
                 nextButton.onClick.AddListener(GoToNextDialogue);
                 break;
 
             case 6:
-                dialogueText.text = "버튼이 하나 보인다. 누를까? \n<color=yellow>[Q]를 눌러 주파수 조율기를 활성화할 수 있습니다.</color>";
+                dialogueText.text = "뭔가 오래된 것 같은 기계다. \n버튼이 하나 있는데 눌러볼까? \n<color=yellow>[Q]를 눌러 주파수 조율기를 활성화할 수 있습니다.</color>";
                 tunerObject.SetActive(false);
                 nextButton.onClick.AddListener(CloseDialogueAndResumePlay);
                 break;
 
             case 7: //Player가 Q를 눌러 레버를 확인해서 레버를 당기고 난 직후
                 playerMove.canMove = false;
-                TunerManager.Instance.PauseTimer();
-                dialogueText.text = "뭐지 이 기계? 버튼을 누르니 완전 다른 세상으로 온 것 같군.\n근데 레버를 내렸는데 왜 아무 반응이 없지? 다시 버튼을 눌러볼까?\n<color=yellow>[Q]를 다시 누르면 주파수 조율기가 비활성화 됩니다.</color>";
+                dialogueText.text = "뭐지 이 기계? 버튼을 누르니 완전 다른 세상에 온 것 같아..\n일단 이 기계가 있으면 기장실까지 갈 수 있겠어. 가자!\n<color=yellow>[Q]를 다시 누르면 주파수 조율기가 비활성화 됩니다.</color>";
                 nextButton.onClick.AddListener(CloseDialogueAndResumePlay);
                 break;
 
@@ -139,7 +144,7 @@ public class TutorialManager : MonoBehaviour
             case 9: //튜토리얼 종료
                 tutorialPanel.SetActive(false);
                 playerMove.canMove = true;
-                gameObject.SetActive(false);
+                this.enabled = false;
                 break;
 
 

@@ -26,7 +26,6 @@ public class StageManager : MonoBehaviour
         //게임 매니져에게 새로운 리스폰포인트 알려줌
         if (GameManager.instance != null) GameManager.instance.SetNewRespawnPoint(newRespawnPoint);
 
-        if (TunerManager.Instance != null) TunerManager.Instance.UpdateVolumeForStage(currentStage);
 
     }
 

@@ -25,7 +25,6 @@ public class TunerManager : MonoBehaviour
     [Header("포스트 프로세싱 (URP)")]
     [Tooltip("조율기를 켰을 때 활성화할 전용 Volume 오브젝트를 연결하세요")]
     public GameObject tunerVolumeObject;
-    private ColorAdjustments tunerColorAdjustments;
 
     private Coroutine tunerCoroutine;
 
@@ -93,8 +92,6 @@ public class TunerManager : MonoBehaviour
         //속도 느리게 1/10
         Time.timeScale = 0.1f;
 
-        if (StageManager.instance != null) UpdateVolumeForStage(StageManager.instance.currentStage);
-
         if (tunerVolumeObject != null) tunerVolumeObject.SetActive(true);
 
         //타이머 코루틴을 시작하고, 나중에 중지시키기 위해 변수에 저장
@@ -115,19 +112,6 @@ public class TunerManager : MonoBehaviour
         {
             StopCoroutine(tunerCoroutine);
             tunerCoroutine = null;
-        }
-
-    }
-
-    public void UpdateVolumeForStage(int stageNumber)
-    {
-        if (tunerVolumeObject == null) return;
-        if(tunerVolumeObject.GetComponent<Volume>().profile.TryGet(out tunerColorAdjustments))
-        {
-            Debug.Log($"[TunerManager] 스테이지 {stageNumber}에 맞는 효과로 업데이트합니다.");
-            if (stageNumber == 0) tunerColorAdjustments.postExposure.value = -2f;
-            else if (stageNumber == 2) tunerColorAdjustments.postExposure.value = -3f;
-            else if (stageNumber == 5) tunerColorAdjustments.postExposure.value = -7f;
         }
 
     }
