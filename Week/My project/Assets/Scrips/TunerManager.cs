@@ -1,6 +1,7 @@
 using System.Collections;
-using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 //주파수 조율기의 기능 총괄
 public class TunerManager : MonoBehaviour
@@ -9,6 +10,7 @@ public class TunerManager : MonoBehaviour
 
     [Header("조율기 상태")]
     public bool isTunerActive = false; //조율기가 현재 켜져있는가?
+    public bool isTimerPaused = false; //타이머 일시정지
 
     [Header("조율기 설정")]
     [Tooltip("조율기가 켜져있는 최대 시간(초)")]
@@ -20,6 +22,10 @@ public class TunerManager : MonoBehaviour
     [Tooltip("조율기 남은 시간")]
     public float currentTime;
 
+    [Header("포스트 프로세싱 (URP)")]
+    [Tooltip("조율기를 켰을 때 활성화할 전용 Volume 오브젝트를 연결하세요")]
+    public GameObject tunerVolumeObject;
+    private ColorAdjustments tunerColorAdjustments;
 
     private Coroutine tunerCoroutine;
 
@@ -35,6 +41,28 @@ public class TunerManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    private void Start()
+    {
+        if (tunerVolumeObject != null)
+        {
+            tunerVolumeObject.SetActive(false);
+        } //일단 tuner Volume은 끄고 시작
+    }
+
+    public void PauseTimer()
+    {
+        isTimerPaused = true;
+        Debug.Log("[TunerManager] 타이머 일시정지");
+
+    }
+
+    public void ResumeTimer()
+    {
+        isTimerPaused = false;
+        Debug.Log("[TunerManager] 타이머 재개");
+    }
+
 
     //Player가 'Q'를 누르면 작동하는 함수
     public void ToggleTuner()
@@ -65,6 +93,10 @@ public class TunerManager : MonoBehaviour
         //속도 느리게 1/10
         Time.timeScale = 0.1f;
 
+        if (StageManager.instance != null) UpdateVolumeForStage(StageManager.instance.currentStage);
+
+        if (tunerVolumeObject != null) tunerVolumeObject.SetActive(true);
+
         //타이머 코루틴을 시작하고, 나중에 중지시키기 위해 변수에 저장
         tunerCoroutine = StartCoroutine(TunerTimer());
     }
@@ -75,6 +107,9 @@ public class TunerManager : MonoBehaviour
         Debug.Log("조율기 비활성화");
         //정상 속도로
         Time.timeScale = 1.0f;
+
+        if (tunerVolumeObject != null) tunerVolumeObject.SetActive(false);
+
         //만약 실행 중인 코루틴이 있다면 즉시 중지
         if(tunerCoroutine != null)
         {
@@ -84,11 +119,29 @@ public class TunerManager : MonoBehaviour
 
     }
 
+    public void UpdateVolumeForStage(int stageNumber)
+    {
+        if (tunerVolumeObject == null) return;
+        if(tunerVolumeObject.GetComponent<Volume>().profile.TryGet(out tunerColorAdjustments))
+        {
+            Debug.Log($"[TunerManager] 스테이지 {stageNumber}에 맞는 효과로 업데이트합니다.");
+            if (stageNumber == 0) tunerColorAdjustments.postExposure.value = -2f;
+            else if (stageNumber == 2) tunerColorAdjustments.postExposure.value = -3f;
+            else if (stageNumber == 5) tunerColorAdjustments.postExposure.value = -7f;
+        }
+
+    }
+
+
+
     private IEnumerator TunerTimer()
     {
         while (currentTime > 0)
         {
-            currentTime -= Time.unscaledDeltaTime;
+            if (!isTimerPaused)
+            {
+                currentTime -= Time.unscaledDeltaTime;
+            }
             yield return null;
         }
         currentTime = 0;

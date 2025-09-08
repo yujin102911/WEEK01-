@@ -53,6 +53,7 @@ public class Lever : MonoBehaviour
 
                 if(interactUI != null) interactUI.SetActive(false);
 
+                GameManager.instance.isStage1LeverPulled = true;
                 this.enabled = false;
 
             }

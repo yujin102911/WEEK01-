@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,6 +12,12 @@ public class GameManager : MonoBehaviour
 
     [Tooltip("리스폰 될 위치를 정하는 오브젝트를 연결")]
     public Transform respawnPoint;
+
+    [Header("게임 진행 상태")]
+    [Tooltip("플레이어가 특정 레버를 당겼는지 여부를 검사")]
+    public bool isStage1LeverPulled = false;
+
+    private float previousTimeScale = 1f;
 
     private void Awake()
     {
@@ -49,4 +56,25 @@ public class GameManager : MonoBehaviour
         }
 
     }
+
+    public void PauseGame()
+    {
+
+        previousTimeScale = Time.timeScale;
+
+        Time.timeScale = 0f;
+        Debug.Log("일시정지");
+    }
+    public void ResumeGame()
+    {
+        Time.timeScale = previousTimeScale;
+        Debug.Log("재개");
+    }
+
+    public void SetNewRespawnPoint(Transform newPoint)
+    {
+        respawnPoint = newPoint;
+        Debug.Log($"[GameManager] 새로운 리스폰 위치가 {newPoint.name}으로 설정되었습니다.");
+    }
+
 }
